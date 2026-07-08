@@ -100,14 +100,14 @@
   .btn .ico{font-size:14px;line-height:1}
 
   /* ---------- Hero verdict ---------- */
-  .hero{padding:28px 0 6px}
+  .hero{padding:18px 0 4px}
   .eyebrow{
     font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;
     text-transform:uppercase;color:var(--ink-faint);margin:0 0 10px;
   }
   .lede{
-    font-size:clamp(20px,3.4vw,30px);line-height:1.22;letter-spacing:-.02em;
-    font-weight:720;margin:0;max-width:24ch;
+    font-size:clamp(18px,2.5vw,23px);line-height:1.25;letter-spacing:-.015em;
+    font-weight:720;margin:0;max-width:46ch;
   }
   .lede em{font-style:normal;color:var(--device)}
 
@@ -163,7 +163,7 @@
   .node-box{transition:.2s;cursor:pointer}
   .node .node-box{stroke:rgba(255,255,255,.5);stroke-width:1.2}
   .node-name{font-weight:700;font-size:15px;fill:#fff;font-family:var(--font-sans)}
-  .node-ico{font-size:17px}
+  .node-ico{font-size:23px}
   .node-ip{font-family:var(--font-mono);font-size:12px;fill:rgba(255,255,255,.92)}
   .node[data-id="device"] .node-box{fill:var(--device)}
   .node[data-id="isp"] .node-box{fill:var(--isp)}
@@ -177,7 +177,7 @@
   .seg.enc{stroke:var(--enc)}
   .seg.plain{stroke:var(--plain);stroke-dasharray:2 9}
   .seg.tunnel{stroke:var(--tunnel)}
-  .lock{font-size:15px}
+  .lock{font-size:21px}
   .packet{filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}
 
   /* ---------- Callout ---------- */
@@ -246,8 +246,8 @@
   .qr-head{display:flex;align-items:center;gap:9px;margin-bottom:6px}
   .qr-ico{font-size:19px}
   .qr-title{font-size:15px;font-weight:750;color:var(--verdict,var(--ink))}
-  .qr-explain{font-size:13px;color:var(--ink-soft);line-height:1.5}
-  .qr-feedback{font-size:12px;font-weight:650;margin-top:9px;color:var(--verdict,var(--ink))}
+  .qr-explain{font-size:13px;color:var(--ink-soft);line-height:1.5;margin-top:6px}
+  .qr-feedback{font-size:12px;font-weight:650;color:var(--verdict,var(--ink))}
   .qr-feedback .guess-tag{font-family:var(--font-mono);font-weight:600;color:var(--ink)}
   .rlog{
     font-family:var(--font-mono);font-size:12.5px;color:var(--ink-soft);
@@ -460,7 +460,7 @@
         ip:["Yes — by your IP address","🟠","yes",
           "No cookie or login, but the site sees your real IP (203.0.113.45). It's tied to your ISP account, so with a legal request your ISP could reveal who you are."],
         hard:["Hard to say — but not truly anonymous","🟢","unsure",
-          "You hid your IP with a VPN, blocked cookies and stayed logged out — well done. But your browser fingerprint can still single you out. Nothing online is perfectly anonymous."]
+          "You hid your IP with a VPN, blocked cookies and stayed logged out — well done. But the site can still read your browser fingerprint — screen resolution, operating system, browser, language, time zone and installed fonts. That mix is often unique enough to single you out, so nothing online is perfectly anonymous."]
       },
       log:{ site:"site",sees:"sees",cookie:"cookie",login:"login",conn:"connection" },
       legendTitle:"Connection lines",
@@ -532,7 +532,7 @@
         ip:["能 — 憑你的 IP 位址","🟠","yes",
           "沒有 Cookie 或登入，但網站看到你的真實 IP (203.0.113.45)。它連結到你的供應商帳戶，經合法要求供應商便可查出你是誰。"],
         hard:["難說 — 但並非真正匿名","🟢","unsure",
-          "你用 VPN 隱藏了 IP、封鎖了 Cookie、亦沒有登入 — 做得好。但你的瀏覽器指紋仍能認出你。網上沒有絕對匿名。"]
+          "你用 VPN 隱藏了 IP、封鎖了 Cookie、亦沒有登入 — 做得好。但網站仍可讀取你的瀏覽器指紋 — 螢幕解像度、作業系統、瀏覽器、語言、時區及已安裝字型。這些組合往往足夠獨特，能認出你，所以網上沒有絕對匿名。"]
       },
       log:{ site:"網站",sees:"看到",cookie:"Cookie",login:"登入",conn:"連線" },
       legendTitle:"連線線條",
@@ -835,8 +835,8 @@
       const guessLabel = choices.find(c=>c[0]===state.quizAnswer)[1];
       rev.innerHTML =
         `<div class="qr-head"><span class="qr-ico">${vd[1]}</span><span class="qr-title">${vd[0]}</span></div>`+
-        `<div class="qr-explain">${vd[3]}</div>`+
-        `<div class="qr-feedback">${quiz.your}: <span class="guess-tag">${guessLabel}</span> — ${correct?quiz.correct:quiz.reconsider}</div>`;
+        `<div class="qr-feedback">${quiz.your}: <span class="guess-tag">${guessLabel}</span> — ${correct?quiz.correct:quiz.reconsider}</div>`+
+        `<div class="qr-explain">${vd[3]}</div>`;
     }else{
       rev.hidden=true; rev.innerHTML="";
     }
