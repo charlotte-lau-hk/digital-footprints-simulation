@@ -224,13 +224,31 @@
     margin-top:16px;background:var(--panel);border:1px solid var(--line);
     border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;
   }
-  .readout .rtop{
-    display:flex;align-items:center;gap:10px;padding:14px 18px;
-    border-left:5px solid var(--verdict,var(--ink-faint));
+  .quiz{padding:16px 18px}
+  .q-head{display:flex;align-items:center;gap:9px;margin-bottom:2px}
+  .q-ico{font-size:20px}
+  .q-question{font-size:16px;font-weight:750;letter-spacing:-.01em}
+  .q-guess{font-size:12.5px;color:var(--ink-soft);margin:2px 0 12px}
+  .q-choices{display:flex;gap:8px;flex-wrap:wrap}
+  .q-choice{
+    font-family:var(--font-sans);font-size:14px;font-weight:650;
+    padding:9px 18px;border-radius:10px;border:1.5px solid var(--line);
+    background:var(--panel-2);color:var(--ink);cursor:pointer;transition:.15s;
   }
-  .verdict-ico{font-size:22px;flex:none}
-  .rtop .rlab{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
-  .rtop .rmain{font-size:15.5px;font-weight:700;color:var(--verdict,var(--ink))}
+  .q-choice:hover{border-color:var(--ink-faint)}
+  .q-choice:focus-visible{outline:2px solid var(--device);outline-offset:2px}
+  .q-choice.picked{border-color:var(--device);background:color-mix(in srgb,var(--device) 14%,transparent);color:var(--device)}
+  .q-reveal{
+    margin-top:14px;padding:13px 14px;border-radius:12px;
+    background:var(--panel-2);border-left:5px solid var(--verdict,var(--ink-faint));
+  }
+  .q-reveal[hidden]{display:none}
+  .qr-head{display:flex;align-items:center;gap:9px;margin-bottom:6px}
+  .qr-ico{font-size:19px}
+  .qr-title{font-size:15px;font-weight:750;color:var(--verdict,var(--ink))}
+  .qr-explain{font-size:13px;color:var(--ink-soft);line-height:1.5}
+  .qr-feedback{font-size:12px;font-weight:650;margin-top:9px;color:var(--verdict,var(--ink))}
+  .qr-feedback .guess-tag{font-family:var(--font-mono);font-weight:600;color:var(--ink)}
   .rlog{
     font-family:var(--font-mono);font-size:12.5px;color:var(--ink-soft);
     padding:12px 18px;border-top:1px solid var(--line);
@@ -317,12 +335,14 @@
       </div>
 
       <div class="readout" id="readout">
-        <div class="rtop">
-          <span class="verdict-ico" id="verdictIco">👁️</span>
-          <div>
-            <div class="rlab" data-i18n="verdictLabel">Can this website identify you?</div>
-            <div class="rmain" id="verdictMain">—</div>
+        <div class="quiz">
+          <div class="q-head">
+            <span class="q-ico">🕵️</span>
+            <span class="q-question" data-i18n="verdictLabel">Can this website identify you?</span>
           </div>
+          <div class="q-guess" id="qGuess">Make your guess, then reveal the answer:</div>
+          <div class="q-choices" id="qChoices"></div>
+          <div class="q-reveal" id="qReveal" hidden></div>
         </div>
         <div class="rlog" id="rlog"></div>
       </div>
@@ -374,7 +394,8 @@
     user:"chan_tai_man@example.com"
   };
 
-  const state = { vpn:false, login:false, cookies:true, https:true, lang:"en", theme:"light", pinned:null };
+  const state = { vpn:false, login:false, cookies:true, https:true, lang:"en", theme:"light", pinned:null,
+                  quizAnswer:null, quizRevealed:false };
 
   /* ---------------- i18n ---------------- */
   const T = {
@@ -391,7 +412,7 @@
         vpn:["Use VPN","Route through a VPN server","VPN"],
         login:["Log in","Sign in to your account","Login"],
         cookies:["Allow cookies","Let the site store an ID on your device","Cookies"],
-        https:["Secure connection","Use HTTPS instead of HTTP","HTTPS"]
+        https:["Secure connection","On = HTTPS (encrypted) · Off = HTTP (open)","HTTPS"]
       },
       on:"ON",off:"OFF",
       // nodes
@@ -403,27 +424,43 @@
         footprints:"Footprints it can use"
       },
       v:{
-        encrypted:"Encrypted",readable:"Readable!",tunnel:"Tunnelled",
+        encrypted:"Encrypted",readable:"Readable!",tunnel:"Encrypted tunnel",
         yes:"Yes",no:"No",on:"On",off:"Off",none:"none",anon:"anonymous",
-        direct:"direct",viaVpn:"via VPN",realIP:"your real IP",vpnIP:"VPN's IP",notInUse:"not in use"
+        direct:"direct",viaVpn:"via VPN",realIP:"your real IP",vpnIP:"VPN's IP",
+        notInUse:"not in use",always:"always readable",pseudo:"pseudonymous ID"
       },
       notes:{
         device:"This is you. You choose the destination and your privacy settings.",
-        ispOn:"Because a VPN is on, the ISP only sees that you connected to a VPN — not which site.",
+        ispOn:"Because a VPN is on, the traffic is encrypted. The ISP only sees that you connected to a VPN server — not which site or what you do.",
         ispHttps:"With HTTPS the ISP still logs which site and when, just not the content.",
         ispHttp:"With HTTP the ISP can read the whole page and anything you type.",
         vpnOff:"No VPN in use — your traffic goes straight through the ISP to the site.",
-        vpnOn:"The VPN sees your real destination. You now trust the VPN provider instead of the ISP.",
+        vpnOn:"The VPN provider sees your real IP (203.0.113.45) and which site you visit — though HTTPS keeps the content encrypted. You now trust the VPN provider instead of your ISP.",
+        vpnOnHttp:"The VPN provider sees your real IP and the real destination — and because this is HTTP, it can also read the page and everything you type, including your login. You're trusting it with all of it.",
         siteHttp:"Over HTTP the data crossed the internet in the open.",
         siteEndpoint:"The site is the endpoint, so it always reads the content — HTTPS only protects it on the way."
       },
-      fp:{ ip:"IP address",cookie:"Cookie ID",login:"Logged-in user" },
+      fp:{ ip:"IP address",cookie:"Cookie ID",login:"Logged-in user",fingerprint:"Browser fingerprint" },
+      fpNote:"Even with no IP, cookie or login, the site can read your browser fingerprint — screen resolution, OS &amp; browser, language, time zone, installed fonts. Combined, these can single you out.",
       verdictLabel:"Can this website identify you?",
+      quiz:{
+        guess:"Make your guess, then reveal the answer:",
+        yes:"Yes",no:"No",unsure:"Not sure",
+        answerLabel:"Answer",
+        your:"You guessed",
+        correct:"Nice — that matches.",
+        reconsider:"Not quite — here's why:"
+      },
+      // [headline, icon, bestAnswer, explanation]
       verdict:{
-        account:["Yes — it knows your account","🔴"],
-        cookie:["By a cookie — it can link all your visits","🟠"],
-        ip:["By your IP — traceable back to you via your ISP","🟠"],
-        hard:["Hard to pin down — but fingerprinting is still possible","🟢"]
+        account:["Yes — it knows your account","🔴","yes",
+          "You're logged in, so the site ties every action to your account (chan_tai_man@example.com). This is the strongest identifier of all."],
+        cookie:["Yes — a tracking cookie gives you a pseudonymous identity","🟠","yes",
+          "No login, but a tracking cookie (ID a17f-9c3d-e082) is a pseudonymous identity: the site may not know your name, yet it recognises this browser on every visit and links your whole history."],
+        ip:["Yes — by your IP address","🟠","yes",
+          "No cookie or login, but the site sees your real IP (203.0.113.45). It's tied to your ISP account, so with a legal request your ISP could reveal who you are."],
+        hard:["Hard to say — but not truly anonymous","🟢","unsure",
+          "You hid your IP with a VPN, blocked cookies and stayed logged out — well done. But your browser fingerprint can still single you out. Nothing online is perfectly anonymous."]
       },
       log:{ site:"site",sees:"sees",cookie:"cookie",login:"login",conn:"connection" },
       legendTitle:"Connection lines",
@@ -448,7 +485,7 @@
         vpn:["使用 VPN","經 VPN 伺服器連線","VPN"],
         login:["登入帳戶","登入你的帳戶","登入"],
         cookies:["允許 Cookies","讓網站在你裝置儲存識別碼","Cookies"],
-        https:["加密連線","使用 HTTPS 而非 HTTP","HTTPS"]
+        https:["加密連線","開 = HTTPS（加密）· 關 = HTTP（明文）","HTTPS"]
       },
       on:"開",off:"關",
       node:{ device:["你的裝置","💻"], isp:["網絡供應商","📡"], vpn:["VPN 伺服器","🛡️"], website:[NET.domain,"🌐"] },
@@ -459,27 +496,43 @@
         footprints:"可用來辨認你的足跡"
       },
       v:{
-        encrypted:"已加密",readable:"可被讀取！",tunnel:"隧道加密",
+        encrypted:"已加密",readable:"可被讀取！",tunnel:"加密隧道",
         yes:"是",no:"否",on:"開",off:"關",none:"無",anon:"匿名",
-        direct:"直接",viaVpn:"經 VPN",realIP:"你的真實 IP",vpnIP:"VPN 的 IP",notInUse:"未使用"
+        direct:"直接",viaVpn:"經 VPN",realIP:"你的真實 IP",vpnIP:"VPN 的 IP",
+        notInUse:"未使用",always:"必定可讀取",pseudo:"假名身分"
       },
       notes:{
         device:"這就是你。你決定要去的網站和你的私隱設定。",
-        ispOn:"因為開了 VPN，供應商只看到你連上了 VPN，看不到你去哪個網站。",
+        ispOn:"因為開了 VPN，流量已加密。供應商只看到你連上了 VPN 伺服器，看不到你去哪個網站或做什麼。",
         ispHttps:"用 HTTPS 時，供應商仍會記錄你去哪個網站及時間，但看不到內容。",
         ispHttp:"用 HTTP 時，供應商可讀取整個網頁及你輸入的所有資料。",
         vpnOff:"沒有使用 VPN — 你的流量直接經供應商到達網站。",
-        vpnOn:"VPN 看到你真正要去的網站。你現在改為信任 VPN 供應商，而非供應商。",
+        vpnOn:"VPN 供應商看到你的真實 IP (203.0.113.45) 及你去哪個網站 — 不過 HTTPS 令內容保持加密。你現在改為信任 VPN 供應商，而非你的網絡供應商。",
+        vpnOnHttp:"VPN 供應商看到你的真實 IP 及真正的目的地 — 而且因為是 HTTP，它還能讀取整個網頁及你輸入的所有資料，包括你的登入。你把一切都交給它信任。",
         siteHttp:"使用 HTTP，資料以明文方式穿過互聯網。",
         siteEndpoint:"網站是終點，所以它一定能讀到內容 — HTTPS 只保護傳送途中的資料。"
       },
-      fp:{ ip:"IP 位址",cookie:"Cookie 識別碼",login:"登入用戶" },
+      fp:{ ip:"IP 位址",cookie:"Cookie 識別碼",login:"登入用戶",fingerprint:"瀏覽器指紋" },
+      fpNote:"即使沒有 IP、Cookie 或登入，網站仍可讀取你的瀏覽器指紋 — 螢幕解像度、作業系統及瀏覽器、語言、時區、已安裝字型。這些組合起來足以認出你。",
       verdictLabel:"這個網站能認出你嗎？",
+      quiz:{
+        guess:"先猜一猜，然後揭曉答案：",
+        yes:"能",no:"不能",unsure:"不確定",
+        answerLabel:"答案",
+        your:"你的答案",
+        correct:"答對了！",
+        reconsider:"未必如此 — 原因如下："
+      },
+      // [標題, 圖示, 最佳答案, 解釋]
       verdict:{
-        account:["能 — 它知道你的帳戶","🔴"],
-        cookie:["憑 Cookie — 能連結你所有的瀏覽紀錄","🟠"],
-        ip:["憑你的 IP — 可經供應商追查到你","🟠"],
-        hard:["難以辨認 — 但仍可能被瀏覽器指紋追蹤","🟢"]
+        account:["能 — 它知道你的帳戶","🔴","yes",
+          "你已登入，網站把你每個動作都連結到你的帳戶 (chan_tai_man@example.com)。這是最強的識別方式。"],
+        cookie:["能 — 追蹤 Cookie 給你一個假名身分","🟠","yes",
+          "沒有登入，但追蹤 Cookie（識別碼 a17f-9c3d-e082）是一個假名身分：網站或許不知道你的名字，卻能在每次到訪時認出這個瀏覽器，並連結你的整個瀏覽紀錄。"],
+        ip:["能 — 憑你的 IP 位址","🟠","yes",
+          "沒有 Cookie 或登入，但網站看到你的真實 IP (203.0.113.45)。它連結到你的供應商帳戶，經合法要求供應商便可查出你是誰。"],
+        hard:["難說 — 但並非真正匿名","🟢","unsure",
+          "你用 VPN 隱藏了 IP、封鎖了 Cookie、亦沒有登入 — 做得好。但你的瀏覽器指紋仍能認出你。網上沒有絕對匿名。"]
       },
       log:{ site:"網站",sees:"看到",cookie:"Cookie",login:"登入",conn:"連線" },
       legendTitle:"連線線條",
@@ -534,6 +587,7 @@
     switchDefs.forEach(def=>{
       const s = L().sw[def.key];
       const on = state[def.key];
+      const stateTxt = def.key==="https" ? (on?"HTTPS":"HTTP") : (on?L().on:L().off);
       const row = document.createElement("div");
       row.className="switch-row";
       row.innerHTML =
@@ -545,13 +599,15 @@
          <button class="toggle" type="button" role="switch" aria-checked="${on}"
                  style="--accent:${def.color}" data-key="${def.key}"
                  aria-label="${s[0]}"></button>
-         <span class="state">${on?L().on:L().off}</span>`;
+         <span class="state">${stateTxt}</span>`;
       c.appendChild(row);
     });
     c.querySelectorAll(".toggle").forEach(btn=>{
       btn.addEventListener("click",()=>{
         const k = btn.dataset.key;
         state[k] = !state[k];
+        // a new configuration is a new question — reset the guess
+        state.quizAnswer=null; state.quizRevealed=false;
         renderControls();
         render();
       });
@@ -677,11 +733,11 @@
       }else{
         const content = state.https?pill("enc",v.encrypted):pill("plain",v.readable);
         body=`<dl class="kv">
-          <dt>${lbl.source}</dt><dd>${NET.devicePublic}</dd>
+          <dt>${lbl.source}</dt><dd>${NET.devicePublic} <span style="color:var(--ink-faint)">(${v.realIP})</span></dd>
           <dt>${lbl.destination}</dt><dd>${NET.domain}<br>${NET.siteIP}</dd>
           <dt>${lbl.content}</dt><dd>${content}</dd>
         </dl>
-        <div class="co-note">${notes.vpnOn}</div>`;
+        <div class="co-note">${state.https?notes.vpnOn:notes.vpnOnHttp}</div>`;
       }
     }
 
@@ -699,7 +755,10 @@
         <span class="fv ${state.cookies?'hit':'miss'}">${state.cookies?NET.cookieId:v.none}</span></div>
       <div class="fp"><span class="fic">👤</span><span class="fl">${fp.login}</span>
         <span class="fv ${state.login?'hit':'miss'}">${state.login?NET.user:v.anon}</span></div>
-      <div class="co-note">${state.https?notes.siteEndpoint:notes.siteHttp}</div>`;
+      <div class="fp"><span class="fic">🔎</span><span class="fl">${fp.fingerprint}</span>
+        <span class="fv hit">${v.always}</span></div>
+      <div class="co-note">${L().fpNote}</div>
+      <div class="co-note" style="border-top:none;padding-top:0;margin-top:6px">${state.https?notes.siteEndpoint:notes.siteHttp}</div>`;
     }
 
     return `<div class="co-head">
@@ -738,18 +797,49 @@
 
   /* ---------------- Live readout ---------------- */
   function updateReadout(){
-    const v=L().v, verdict=L().verdict, log=L().log;
+    const v=L().v, verdict=L().verdict, log=L().log, quiz=L().quiz;
     let key;
     if(state.login) key="account";
     else if(state.cookies) key="cookie";
     else if(!state.vpn) key="ip";
     else key="hard";
-    const vd=verdict[key];
+    const vd=verdict[key]; // [headline, icon, bestAnswer, explanation]
     const colors={account:"var(--plain)",cookie:"var(--isp)",ip:"var(--isp)",hard:"var(--enc)"};
-    document.getElementById("verdictMain").textContent=vd[0];
-    document.getElementById("verdictIco").textContent=vd[1];
-    document.getElementById("readout").querySelector(".rtop").style.setProperty("--verdict",colors[key]);
-    document.getElementById("verdictMain").style.setProperty("--verdict",colors[key]);
+
+    // guess prompt
+    document.getElementById("qGuess").textContent=quiz.guess;
+
+    // choice buttons
+    const choices=[["yes",quiz.yes],["no",quiz.no],["unsure",quiz.unsure]];
+    const cbox=document.getElementById("qChoices");
+    cbox.innerHTML="";
+    choices.forEach(([val,label])=>{
+      const b=document.createElement("button");
+      b.type="button";
+      b.className="q-choice"+(state.quizAnswer===val?" picked":"");
+      b.textContent=label;
+      b.addEventListener("click",e=>{
+        e.stopPropagation();
+        state.quizAnswer=val; state.quizRevealed=true;
+        updateReadout();
+      });
+      cbox.appendChild(b);
+    });
+
+    // reveal
+    const rev=document.getElementById("qReveal");
+    if(state.quizRevealed && state.quizAnswer){
+      rev.hidden=false;
+      rev.style.setProperty("--verdict",colors[key]);
+      const correct = state.quizAnswer===vd[2];
+      const guessLabel = choices.find(c=>c[0]===state.quizAnswer)[1];
+      rev.innerHTML =
+        `<div class="qr-head"><span class="qr-ico">${vd[1]}</span><span class="qr-title">${vd[0]}</span></div>`+
+        `<div class="qr-explain">${vd[3]}</div>`+
+        `<div class="qr-feedback">${quiz.your}: <span class="guess-tag">${guessLabel}</span> — ${correct?quiz.correct:quiz.reconsider}</div>`;
+    }else{
+      rev.hidden=true; rev.innerHTML="";
+    }
 
     const seesIP=state.vpn?NET.vpnIP:NET.devicePublic;
     const conn = state.vpn ? "VPN + "+(state.https?"HTTPS":"HTTP") : (state.https?"HTTPS":"HTTP");
