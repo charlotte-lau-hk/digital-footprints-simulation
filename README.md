@@ -1,4 +1,4 @@
-# Web Privacy & Digital Footprints
+# Web Privacy Explorer
 
 An interactive, client-side teaching tool that shows Hong Kong secondary school
 students **what each part of the internet can see when you browse a web page** —
