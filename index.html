@@ -605,7 +605,7 @@
   }
   function layout(){
     const c=chain(), n=c.length, BW=n<=4?168:150, half=BW/2;
-    const leftX=52+half, rightX=VBW-52-half, pos={};
+    const leftX=34+half, rightX=VBW-34-half, pos={};
     c.forEach((id,i)=>{ pos[id]= n===1?leftX : leftX+(rightX-leftX)*i/(n-1); });
     return {c,pos,BW,half};
   }
@@ -650,6 +650,9 @@
 
   function render(){
     curLayout=layout();
+    // Crop vertical whitespace, but keep extra room for the Fake AP's ghost + attacker marker
+    const tall = state.tab==="wifi" && state.attacker==="fakeap";
+    document.querySelector("svg.diagram").setAttribute("viewBox", tall ? "0 0 1000 300" : "0 60 1000 180");
     document.getElementById("stage").classList.toggle("sniff", sniffMode());
     drawSegments();
     drawNodes();
