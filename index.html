@@ -396,7 +396,7 @@
   const NET = {
     domain:"example.com", deviceLAN:"192.168.1.10", devicePublic:"203.0.113.45",
     ispIP:"203.0.113.1", vpnIP:"198.51.100.20", siteIP:"192.0.2.80",
-    apGW:"192.168.50.1", cookieId:"a17f-9c3d-e082", user:"chan_tai_man@example.com"
+    apGW:"192.168.50.1", cookieId:"a17f-9c3d-e082", user:"bob@example.com"
   };
 
   const state = {
@@ -450,7 +450,7 @@
         https:"🔒 only which site (example.com) and when — the content itself is encrypted.",
         plainMain:"🔓 everything: the pages you open and all you type.",
         plainPwd:"🔑 any password you enter",
-        plainLogin:"👤 your login: chan_tai_man@example.com",
+        plainLogin:"👤 your login: bob@example.com",
         plainCookie:"🍪 your tracking cookie (a17f-9c3d-e082)"
       },
       notes:{
@@ -473,7 +473,7 @@
       quiz:{ guess:"Make your guess, then reveal the answer:", yes:"Yes",no:"No",unsure:"Not sure",
              your:"You guessed", correct:"Nice — that matches.", reconsider:"Not quite — here's why:" },
       verdict:{
-        account:["Yes — it knows your account","🔴","yes","You're logged in, so the site ties every action to your account (chan_tai_man@example.com). This is the strongest identifier of all."],
+        account:["Yes — it knows your account","🔴","yes","You're logged in, so the site ties every action to your account (bob@example.com). This is the strongest identifier of all."],
         cookie:["Yes — a tracking cookie gives you a pseudonymous identity","🟠","yes","No login, but a tracking cookie (ID a17f-9c3d-e082) is a pseudonymous identity: the site may not know your name, yet it recognises this browser on every visit and links your whole history."],
         ip:["Yes — by your IP address","🟠","yes","No cookie or login, but the site sees your real IP (203.0.113.45). It's tied to your ISP account, so with a legal request your ISP could reveal who you are."],
         hard:["Hard to say — but not truly anonymous","🟢","unsure","You hid your IP with a VPN, blocked cookies and stayed logged out — well done. But the site can still read your browser fingerprint — screen resolution, operating system, browser, language, time zone and installed fonts. That mix is often unique enough to single you out, so nothing online is perfectly anonymous."]
@@ -542,7 +542,7 @@
         https:"🔒 只知道你去哪個網站 (example.com) 及時間 — 內容本身已加密。",
         plainMain:"🔓 一切：你開啟的網頁及你輸入的所有內容。",
         plainPwd:"🔑 你輸入的任何密碼",
-        plainLogin:"👤 你的登入：chan_tai_man@example.com",
+        plainLogin:"👤 你的登入：bob@example.com",
         plainCookie:"🍪 你的追蹤 Cookie（a17f-9c3d-e082）"
       },
       notes:{
@@ -565,7 +565,7 @@
       quiz:{ guess:"先猜一猜，然後揭曉答案：", yes:"能",no:"不能",unsure:"不確定",
              your:"你的答案", correct:"答對了！", reconsider:"未必如此 — 原因如下：" },
       verdict:{
-        account:["能 — 它知道你的帳戶","🔴","yes","你已登入，網站把你每個動作都連結到你的帳戶 (chan_tai_man@example.com)。這是最強的識別方式。"],
+        account:["能 — 它知道你的帳戶","🔴","yes","你已登入，網站把你每個動作都連結到你的帳戶 (bob@example.com)。這是最強的識別方式。"],
         cookie:["能 — 追蹤 Cookie 給你一個假名身分","🟠","yes","沒有登入，但追蹤 Cookie（識別碼 a17f-9c3d-e082）是一個假名身分：網站或許不知道你的名字，卻能在每次到訪時認出這個瀏覽器，並連結你的整個瀏覽紀錄。"],
         ip:["能 — 憑你的 IP 位址","🟠","yes","沒有 Cookie 或登入，但網站看到你的真實 IP (203.0.113.45)。它連結到你的供應商帳戶，經合法要求供應商便可查出你是誰。"],
         hard:["難說 — 但並非真正匿名","🟢","unsure","你用 VPN 隱藏了 IP、封鎖了 Cookie、亦沒有登入 — 做得好。但網站仍可讀取你的瀏覽器指紋 — 螢幕解像度、作業系統、瀏覽器、語言、時區及已安裝字型。這些組合往往足夠獨特，能認出你，所以網上沒有絕對匿名。"]
