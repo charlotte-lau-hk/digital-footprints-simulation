@@ -7,7 +7,7 @@ Built by **Charlotte Lau** as a teaching tool for ICT / network security.
 
 ## Live demo
 
-👉 https://charlotte-lau-hk.github.io/digital-footprints-simulation/
+👉 https://charlotte-lau-hk.github.io/web-privacy-explorer/
 
 ## What it does
 
