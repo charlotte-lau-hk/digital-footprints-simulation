@@ -53,7 +53,7 @@
   html{-webkit-text-size-adjust:100%}
   body{
     margin:0;background:var(--bg);color:var(--ink);
-    font-family:var(--font-sans);line-height:1.5;
+    font-family:var(--font-sans);line-height:1.1;
     -webkit-font-smoothing:antialiased;
   }
   .wrap{max-width:1120px;margin:0 auto;padding:0 20px 64px}
@@ -177,9 +177,9 @@
 
   .node-box{transition:.2s;cursor:pointer}
   .node .node-box{stroke:rgba(255,255,255,.5);stroke-width:1.2}
-  .node-name{font-weight:700;font-size:15px;fill:#fff;font-family:var(--font-sans)}
-  .node-ico{font-size:23px}
-  .node-ip{font-family:var(--font-mono);font-size:12px;fill:rgba(255,255,255,.92)}
+  .node-name{font-weight:700;font-size:22px;fill:#fff;font-family:var(--font-sans)}
+  .node-ico{font-size:46px}
+  .node-ip{font-family:var(--font-mono);font-size:14px;fill:rgba(255,255,255,.92)}
   .node[data-id="device"] .node-box{fill:var(--device)}
   .node[data-id="isp"] .node-box{fill:var(--isp)}
   .node[data-id="vpn"] .node-box{fill:var(--vpn)}
@@ -266,32 +266,33 @@
   .rlog .sep{color:var(--ink-faint)}
 
   /* ---------- Bottom panels ---------- */
-  .bottom{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:16px;margin-top:16px}
-  .panel{padding:15px 18px}
-  .panel h3{margin:0 0 10px;font-size:13px;font-weight:700}
-  .lg-row{display:flex;align-items:center;gap:10px;font-size:12.5px;padding:5px 0;color:var(--ink-soft)}
-  .lg-line{width:44px;height:0;flex:none;border-top:4px solid;border-radius:4px}
+  .bottom{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+  @media (max-width:760px){.bottom{grid-template-columns:1fr}}
+  .panel{padding:20px 22px}
+  .panel h3{margin:0 0 14px;font-size:15px;font-weight:750}
+  .lg-row{display:flex;align-items:center;gap:12px;font-size:13.5px;padding:7px 0;color:var(--ink-soft);line-height:1.35}
+  .lg-line{width:48px;height:0;flex:none;border-top:4px solid;border-radius:4px}
   .lg-line.enc{border-color:var(--enc)}
   .lg-line.tunnel{border-color:var(--tunnel)}
   .lg-line.plain{border-top-style:dashed;border-color:var(--plain)}
-  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
-  .cmp .c{border:1px solid var(--line);border-radius:11px;padding:10px 11px}
-  .cmp .c h4{margin:0 0 4px;font-size:13px;display:flex;align-items:center;gap:6px}
+  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+  .cmp .c{border:1px solid var(--line);border-radius:12px;padding:13px 14px}
+  .cmp .c h4{margin:0 0 6px;font-size:14px;display:flex;align-items:center;gap:6px}
   .cmp .c.http h4{color:var(--plain)}
   .cmp .c.https h4{color:var(--enc)}
-  .cmp .c p{margin:0;font-size:11.5px;color:var(--ink-soft);line-height:1.45}
-  .ltab{width:100%;border-collapse:collapse;font-size:12px;margin-top:2px}
-  .ltab th,.ltab td{text-align:left;padding:6px 8px;border-top:1px solid var(--line);vertical-align:top}
-  .ltab thead th{color:var(--ink-faint);font-size:11px;font-weight:650;border-top:none}
-  .ltab tbody th{font-weight:650}
-  .lnote{font-size:11px;color:var(--ink-faint);margin:9px 0 0;line-height:1.4}
-  .vcols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2px}
+  .cmp .c p{margin:0;font-size:12.5px;color:var(--ink-soft);line-height:1.5}
+  .ltab{width:100%;border-collapse:collapse;font-size:13px;margin-top:2px}
+  .ltab th,.ltab td{text-align:left;padding:9px 10px;border-top:1px solid var(--line);vertical-align:top;line-height:1.35}
+  .ltab thead th{color:var(--ink-faint);font-size:11.5px;font-weight:650;border-top:none}
+  .ltab tbody th{font-weight:700}
+  .lnote{font-size:12px;color:var(--ink-faint);margin:12px 0 0;line-height:1.45}
+  .vcols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:2px}
   @media (max-width:520px){.vcols{grid-template-columns:1fr}}
-  .vcol h4{margin:0 0 6px;font-size:12.5px}
+  .vcol h4{margin:0 0 8px;font-size:13.5px}
   .vcol.does h4{color:var(--enc)}
   .vcol.not h4{color:var(--plain)}
-  .vcol ul{margin:0;padding-left:16px;font-size:11.5px;color:var(--ink-soft);line-height:1.5}
-  .vcol li{margin-bottom:5px}
+  .vcol ul{margin:0;padding-left:17px;font-size:12.5px;color:var(--ink-soft);line-height:1.5}
+  .vcol li{margin-bottom:7px}
 
   footer.note{margin-top:26px;font-size:11.5px;color:var(--ink-faint);text-align:center;line-height:1.6}
 
@@ -595,7 +596,7 @@
   const L = () => T[state.lang];
 
   /* ---------------- Topology / geometry ---------------- */
-  const CY=150, BH=92, halfH=BH/2, VBW=1000;
+  const CY=150, BH=128, halfH=BH/2, VBW=1000;
 
   function chain(){
     if(state.tab==="home") return state.vpn?["device","isp","vpn","website"]:["device","isp","website"];
@@ -603,8 +604,8 @@
     return state.vpn?["device",apId,"isp","vpn","website"]:["device",apId,"isp","website"];
   }
   function layout(){
-    const c=chain(), n=c.length, BW=n<=4?150:132, half=BW/2;
-    const leftX=70+half, rightX=VBW-70-half, pos={};
+    const c=chain(), n=c.length, BW=n<=4?168:150, half=BW/2;
+    const leftX=52+half, rightX=VBW-52-half, pos={};
     c.forEach((id,i)=>{ pos[id]= n===1?leftX : leftX+(rightX-leftX)*i/(n-1); });
     return {c,pos,BW,half};
   }
@@ -697,10 +698,10 @@
       const danger = (id==="fakeap");
       const grp=el("g",{class:"node"+(danger?" danger":""),"data-id":id,
         transform:`translate(${cx},${CY})`,tabindex:"0",role:"button","aria-label":nd[0]});
-      grp.appendChild(el("rect",{class:"node-box",x:-half,y:-halfH,width:BW,height:BH,rx:16}));
-      grp.appendChild(el("text",{class:"node-ico","text-anchor":"middle",x:0,y:-18},nd[1]));
-      grp.appendChild(el("text",{class:"node-name","text-anchor":"middle",x:0,y:6},nd[0]));
-      grp.appendChild(el("text",{class:"node-ip","text-anchor":"middle",x:0,y:26},ipFor(id)));
+      grp.appendChild(el("rect",{class:"node-box",x:-half,y:-halfH,width:BW,height:BH,rx:18}));
+      grp.appendChild(el("text",{class:"node-ico","text-anchor":"middle",x:0,y:-20},nd[1]));
+      grp.appendChild(el("text",{class:"node-name","text-anchor":"middle",x:0,y:16},nd[0]));
+      grp.appendChild(el("text",{class:"node-ip","text-anchor":"middle",x:0,y:44},ipFor(id)));
       if(id==="fakeap"){
         grp.appendChild(el("line",{class:"atk-link",x1:0,y1:halfH,x2:0,y2:halfH+30}));
         grp.appendChild(el("text",{class:"atk-ico","text-anchor":"middle",x:0,y:halfH+58},"🕵️"));
@@ -711,7 +712,7 @@
     });
     // Real AP ghost (fake-AP scenario)
     if(state.tab==="wifi" && state.attacker==="fakeap"){
-      const x=pos["fakeap"], gw=124, gh=54, gy=54;
+      const x=pos["fakeap"], gw=124, gh=54, gy=42;
       const grp=el("g",{class:"node ghost","data-id":"realap",transform:`translate(${x},${gy})`,
         tabindex:"0",role:"button","aria-label":L().node.realap[0]});
       grp.appendChild(el("rect",{class:"node-box",x:-gw/2,y:-gh/2,width:gw,height:gh,rx:12}));
