@@ -596,7 +596,7 @@
   const L = () => T[state.lang];
 
   /* ---------------- Topology / geometry ---------------- */
-  const CY=150, BH=128, halfH=BH/2, VBW=1000;
+  const CY=150, BH=140, halfH=BH/2, VBW=1000;
 
   function chain(){
     if(state.tab==="home") return state.vpn?["device","isp","vpn","website"]:["device","isp","website"];
@@ -699,9 +699,9 @@
       const grp=el("g",{class:"node"+(danger?" danger":""),"data-id":id,
         transform:`translate(${cx},${CY})`,tabindex:"0",role:"button","aria-label":nd[0]});
       grp.appendChild(el("rect",{class:"node-box",x:-half,y:-halfH,width:BW,height:BH,rx:18}));
-      grp.appendChild(el("text",{class:"node-ico","text-anchor":"middle",x:0,y:-20},nd[1]));
-      grp.appendChild(el("text",{class:"node-name","text-anchor":"middle",x:0,y:16},nd[0]));
-      grp.appendChild(el("text",{class:"node-ip","text-anchor":"middle",x:0,y:44},ipFor(id)));
+      grp.appendChild(el("text",{class:"node-ico","text-anchor":"middle",x:0,y:-14},nd[1]));
+      grp.appendChild(el("text",{class:"node-name","text-anchor":"middle",x:0,y:20},nd[0]));
+      grp.appendChild(el("text",{class:"node-ip","text-anchor":"middle",x:0,y:48},ipFor(id)));
       if(id==="fakeap"){
         grp.appendChild(el("line",{class:"atk-link",x1:0,y1:halfH,x2:0,y2:halfH+30}));
         grp.appendChild(el("text",{class:"atk-ico","text-anchor":"middle",x:0,y:halfH+58},"🕵️"));
