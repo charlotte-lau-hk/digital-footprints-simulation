@@ -1,6 +1,6 @@
-# Digital Footprints Simulator
+# Web Privacy & Digital Footprints
 
-An interactive, client-side simulation that shows Hong Kong secondary school
+An interactive, client-side teaching tool that shows Hong Kong secondary school
 students **what each part of the internet can see when you browse a web page**.
 
 Built by **Charlotte Lau** as a teaching tool for ICT / network security.
